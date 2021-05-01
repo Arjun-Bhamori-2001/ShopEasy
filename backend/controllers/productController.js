@@ -1,5 +1,5 @@
 const Product = require(`../models/product`)
-const ErrorHandler = require(`../utils/errorHandler.js`)
+const ErrorHandler = require(`../utils/ErrorHandler.js`)
 const catchAsyncError = require(`../middlewares/catchAsyncError.js`)
 const APIFeatures = require(`../utils/apiFeatures.js`)
 const cloudinary = require(`cloudinary`)

@@ -1,4 +1,4 @@
-const ErrorHandler = require(`../utils/errorHandler.js`);
+const ErrorHandler = require(`../utils/ErrorHandler.js`);
 
 module.exports = (err,req,res,next) => {
     err.statusCode = err.statusCode||500
