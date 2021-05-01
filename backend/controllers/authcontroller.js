@@ -5,17 +5,26 @@ const ErrorHandler = require(`../utils/ErrorHandler`)
 const sendToken = require(`../utils/jwtToken`)
 const sendEmail = require(`../utils/sendEmail`)
 const crypto = require(`crypto`)
+const cloudinary = require(`cloudinary`)
 
 
 exports.registerUser = catchAsyncError(async (req,res,next) => {
-   const {name, email, password} = req.body
-   const user = await User.create({
+   
+    const result = await cloudinary.v2.uploader.upload(req.body.avatar,{
+        folder : 'Avatars',
+        width : 150,
+        crop : "scale"
+    })
+
+    const {name, email, password} = req.body
+    
+    const user = await User.create({
        name,
        email,
        password,
        avatar:{
-           public_id:`products/chairmount_nuubea`,
-           url:`https://res.cloudinary.com/bookit/image/upload/v1606231285/products/chairmount_nuubea.jpg`
+           public_id:result.public_id,
+           url: result.secure_url
        }
    })
 
@@ -54,7 +63,7 @@ exports.forgotPassword = catchAsyncError( async (req,res,next) => {
     const resetToken = user.getResetPasswordToken()
 
     await user.save({validateBeforeUse : false})
-    const resetUrl = `${req.protocol}://${req.get(`host`)}/api/v1/password/reset/${resetToken}`
+    const resetUrl = `${req.protocol}://${req.get('host')}/password/reset/${resetToken}`;
 
     const message = `Your password reset token is as follow:\n\n${resetUrl}\n\n If you have not requested this eamil, than ignore it`
 
@@ -135,12 +144,30 @@ exports.updatePassword = catchAsyncError(async (req,res,next) => {
 })
 
 exports.updateProfile =  catchAsyncError(async (req,res,next) => {
-    const newUserdata = {
+    const newUserData = {
         name : req.body.name,
         email : req.body.email
     }
+    
+    if (req.body.avatar !== '') {
+        const user = await User.findById(req.user.id)
 
-    const user = await User.findByIdAndUpdate(req.user.id,newUserdata,{
+        const image_id = user.avatar.public_id;
+        const res = await cloudinary.v2.uploader.destroy(image_id);
+
+        const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
+            folder: 'avatars',
+            width: 150,
+            crop: "scale"
+        })
+
+        newUserData.avatar = {
+            public_id: result.public_id,
+            url: result.secure_url
+        }
+    }
+
+    const user = await User.findByIdAndUpdate(req.user.id,newUserData,{
         new: true,
         runValidator: true,
         useFindAndModify: false
@@ -211,6 +238,10 @@ exports.deleteUser = catchAsyncError(async (req,res,next) => {
     if(!user){
         return next(new ErrorHandler(`User has not been found wiht id: ${req.params.id}`,400))
     }
+
+    const image_id = user.avatar.public_id;
+    await cloudinary.v2.uploader.destroy(image_id);
+
     await user.remove() 
     res.status(200).json({
         success : true

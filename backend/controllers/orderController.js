@@ -1,9 +1,11 @@
-const catchAsyncError = require("../middlewares/catchAsyncError");
-const order = require("../models/order");
-const  ErrorHandler = require(`../utils/ErrorHandler.js`)
+const Order = require('../models/order');
+const Product = require('../models/product');
 
+const ErrorHandler = require('../utils/errorHandler');
+const catchAsyncError = require('../middlewares/catchAsyncError');
 
-exports.newOrder = catchAsyncError(async (req,res,next) => {
+// Create a new order   =>  /api/v1/order/new
+exports.newOrder = catchAsyncError(async (req, res, next) => {
     const {
         orderItems,
         shippingInfo,
@@ -11,27 +13,28 @@ exports.newOrder = catchAsyncError(async (req,res,next) => {
         taxPrice,
         shippingPrice,
         totalPrice,
-        payementInfo
-    } = req.body 
+        paymentInfo
 
-    const order = await order.create({
+    } = req.body;
+
+    const order = await Order.create({
         orderItems,
         shippingInfo,
         itemsPrice,
         taxPrice,
         shippingPrice,
         totalPrice,
-        payementInfo,
-        user: req.user.id,
-        paidAt: Date.now()
+        paymentInfo,
+        paidAt: Date.now(),
+        user: req.user._id
     })
 
     res.status(200).json({
-        success : true,
+        success: true,
         order
     })
-
 })
+
 
 // Get single order   =>   /api/v1/order/:id
 exports.getSingleOrder = catchAsyncError(async (req, res, next) => {
@@ -75,22 +78,7 @@ exports.allOrders = catchAsyncError(async (req, res, next) => {
     })
 })
 
-
-// Delete order   =>   /api/v1/admin/order/:id
-exports.deleteOrder = catchAsyncError(async (req, res, next) => {
-    const order = await Order.findById(req.params.id)
-
-    if (!order) {
-        return next(new ErrorHandler('No Order found with this ID', 404))
-    }
-
-    await order.remove()
-
-    res.status(200).json({
-        success: true
-    })
-})
-
+// Update / Process order - ADMIN  =>   /api/v1/admin/order/:id
 exports.updateOrder = catchAsyncError(async (req, res, next) => {
     const order = await Order.findById(req.params.id)
 
@@ -119,3 +107,18 @@ async function updateStock(id, quantity) {
 
     await product.save({ validateBeforeSave: false })
 }
+
+// Delete order   =>   /api/v1/admin/order/:id
+exports.deleteOrder = catchAsyncError(async (req, res, next) => {
+    const order = await Order.findById(req.params.id)
+
+    if (!order) {
+        return next(new ErrorHandler('No Order found with this ID', 404))
+    }
+
+    await order.remove()
+
+    res.status(200).json({
+        success: true
+    })
+})

@@ -1,28 +1,19 @@
-node_modules/
-logs/
-*.env
-config.env
-# Windows thumbnail cache files
-Thumbs.db
-Thumbs.db:encryptable
-ehthumbs.db
-ehthumbs_vista.db
 
-# Dump file
-*.stackdump
+# dependencies
+/node_modules/
+/frontend/node_modules/
 
-# Folder config file
-[Dd]esktop.ini
 
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
+# production
+/frontend/build
 
-# Windows Installer files
-*.cab
-*.msi
-*.msix
-*.msm
-*.msp
+# misc
+/backend/config/config.env
+/frontend/.env.local
+/frontend/.env.development.local
+/frontend/.env.test.local
+/frontend/.env.production.local
 
-# Windows shortcuts
-*.lnk
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
