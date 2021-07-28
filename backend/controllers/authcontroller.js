@@ -8,6 +8,7 @@ const crypto = require(`crypto`)
 const cloudinary = require(`cloudinary`)
 
 
+
 exports.registerUser = catchAsyncError(async (req,res,next) => {
    
     const result = await cloudinary.v2.uploader.upload(req.body.avatar,{
@@ -68,12 +69,14 @@ exports.forgotPassword = catchAsyncError( async (req,res,next) => {
     const message = `Your password reset token is as follow:\n\n${resetUrl}\n\n If you have not requested this eamil, than ignore it`
 
     try{
+        console.log("hello");
        sendEmail({
-           email : user.email,
            subject : `ShoptIt password recovery`,
-            message 
+           text: message,
+           to : user.email,
+           from: process.env.EMAIL,
        })
-
+       console.log("bye");
        res.status(200).json({
            success : true,
            message : `email sent to ${user.email}`

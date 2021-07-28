@@ -27,7 +27,8 @@ body {
 }
 
 nav {
-  background-color: #232f3e;
+  /* background-color: #232f3e; */
+  background-color: #025955;
   padding: 1rem 1rem;
 }
 
@@ -93,7 +94,8 @@ nav {
 }
 
 #view_btn {
-  background-color: #fa9c23;
+  /* background-color: #fa9c23; */
+  background-color: #00917C;
   color: white;
 }
 

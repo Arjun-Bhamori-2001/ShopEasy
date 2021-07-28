@@ -75,7 +75,8 @@ const NewPassword = ({ history, match }) => {
                         <button
                             id="new_password_button"
                             type="submit"
-                            className="btn btn-block py-3">
+                            className="btn btn-block py-3"
+                            onClick={submitHandler} >
                             Set Password
                         </button>
 
