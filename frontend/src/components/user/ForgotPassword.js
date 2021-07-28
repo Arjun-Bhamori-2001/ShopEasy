@@ -5,6 +5,7 @@ import MetaData from '../Layouts/MetaData'
 import { useAlert } from 'react-alert'
 import { useDispatch, useSelector } from 'react-redux'
 import { forgotPassword, clearErrors } from '../../actions/userActions'
+import {FORGOT_PASSWORD_RESET} from "../../constants/userConstants"
 
 const ForgotPassword = () => {
 
@@ -24,6 +25,7 @@ const ForgotPassword = () => {
 
         if (message) {
             alert.success(message)
+            dispatch({type: FORGOT_PASSWORD_RESET});
         }
 
     }, [dispatch, alert, error, message])
